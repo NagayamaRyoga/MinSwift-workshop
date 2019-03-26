@@ -27,11 +27,13 @@ class Parser: SyntaxVisitor {
 
     @discardableResult
     func read() -> TokenSyntax {
-        fatalError("Not Implemented")
+        currentToken = tokens[index]
+        index = min(index + 1, tokens.count - 1)
+        return currentToken
     }
 
     func peek(_ n: Int = 0) -> TokenSyntax {
-        fatalError("Not Implemented")
+        return tokens[min(index + n, tokens.count - 1)]
     }
 
     // MARK: Practice 2
