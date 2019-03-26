@@ -44,7 +44,7 @@ class Parser: SyntaxVisitor {
                 return Double(token.text)
 
             default:
-                fatalError("integerLiteral or floatingLiteral is expected but received \(currentToken.tokenKind)")
+                return nil
         }
     }
 
@@ -58,7 +58,7 @@ class Parser: SyntaxVisitor {
 
     func parseIdentifierExpression() -> Node? {
         guard case .identifier = currentToken!.tokenKind else {
-            fatalError("identifier is expected but received \(currentToken.tokenKind)")
+            return nil
         }
         read() // eat identifier
         return VariableNode(identifier: currentToken.text)
