@@ -90,7 +90,7 @@ class Parser: SyntaxVisitor {
             let operatorPrecedence = binaryOperator?.precedence ?? -1
 
             // Compare between operatorPrecedence and expressionPrecedence
-            if true { // TODO
+            if operatorPrecedence < expressionPrecedence {
                 return currentLHS
             }
 
@@ -103,10 +103,10 @@ class Parser: SyntaxVisitor {
             // If binOperator binds less tightly with RHS than the operator after RHS, let
             // the pending operator take RHS as its LHS.
             let nextPrecedence = extractBinaryOperator(from: currentToken!)?.precedence ?? -1
-            if true { // TODO
+            if nextPrecedence > operatorPrecedence {
                 // Search next RHS from currentRHS
                 // next precedence will be `operatorPrecedence + 1`
-                // TODO rhs = XXX
+                rhs = parseBinaryOperatorRHS(expressionPrecedence: operatorPrecedence + 1, lhs: rhs)
                 if rhs == nil {
                     return nil
                 }
@@ -116,8 +116,8 @@ class Parser: SyntaxVisitor {
                 fatalError("rhs must be nonnull")
             }
 
-            // TODO update current LHS
-            // currentLHS = XXX
+            // Update current LHS
+            currentLHS = BinaryExpressionNode(binaryOperator!, lhs: currentLHS!, rhs: nonOptionalRHS)
         }
     }
 
