@@ -67,7 +67,20 @@ class Parser: SyntaxVisitor {
     // MARK: Practice 3
 
     func extractBinaryOperator(from token: TokenSyntax) -> BinaryExpressionNode.Operator? {
-        fatalError("Not Implemented")
+        switch token.tokenKind {
+            case .spacedBinaryOperator("+"):
+                return .addition
+            case .spacedBinaryOperator("-"):
+                return .subtraction
+            case .spacedBinaryOperator("*"):
+                return .multication
+            case .spacedBinaryOperator("/"):
+                return .division
+            case .spacedBinaryOperator("<"):
+                return .lessThan
+            default:
+                return nil
+        }
     }
 
     private func parseBinaryOperatorRHS(expressionPrecedence: Int, lhs: Node?) -> Node? {
