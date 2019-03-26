@@ -124,7 +124,42 @@ class Parser: SyntaxVisitor {
     // MARK: Practice 4
 
     func parseFunctionDefinitionArgument() -> FunctionNode.Argument {
-        fatalError("Not Implemented")
+        let isWildcard: Bool
+        let label: String?
+        if case .wildcardKeyword = currentToken!.tokenKind {
+            read() // eat _
+
+            isWildcard = true
+            label = nil
+        } else if case .identifier = peek().tokenKind {
+            guard case .identifier(let text) = currentToken!.tokenKind else {
+                fatalError("identifier is expected but received \(currentToken.tokenKind)")
+            }
+            read() // eat identifier
+
+            isWildcard = false
+            label = text
+        } else {
+            isWildcard = false
+            label = nil
+        }
+
+        guard case .identifier(let name) = currentToken!.tokenKind else {
+            fatalError("identifier is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat identifier
+
+        guard case .colon = currentToken!.tokenKind else {
+            fatalError("colon is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat :
+
+        guard case .identifier("Double") = currentToken!.tokenKind else {
+            fatalError("Double is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat Double
+
+        return FunctionNode.Argument(label: isWildcard ? nil : (label ?? name), variableName: name)
     }
 
     func parseFunctionDefinition() -> Node {
