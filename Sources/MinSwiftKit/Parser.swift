@@ -57,11 +57,11 @@ class Parser: SyntaxVisitor {
     }
 
     func parseIdentifierExpression() -> Node? {
-        guard case .identifier = currentToken!.tokenKind else {
+        guard case .identifier(let text) = currentToken!.tokenKind else {
             return nil
         }
         read() // eat identifier
-        return VariableNode(identifier: currentToken.text)
+        return VariableNode(identifier: text)
     }
 
     // MARK: Practice 3
