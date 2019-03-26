@@ -21,6 +21,8 @@ class Parser: SyntaxVisitor {
 
     override func visit(_ token: TokenSyntax) {
         print("Parsing \(token.tokenKind)")
+
+        tokens.append(token)
     }
 
     @discardableResult
