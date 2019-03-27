@@ -6,8 +6,7 @@ private extension BinaryExpressionNode.Operator {
         switch self {
         case .addition, .subtraction: return 20
         case .multication, .division: return 40
-        case .lessThan:
-            fatalError("Not Implemented")
+        case .lessThan: return 10
         }
     }
 }
@@ -275,7 +274,49 @@ class Parser: SyntaxVisitor {
     // MARK: Practice 7
 
     func parseIfElse() -> Node {
-        fatalError("Not Implemented")
+        guard case .ifKeyword = currentToken!.tokenKind else {
+            fatalError("ifKeyword is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat if
+
+        guard let condition = parseExpression() else {
+            fatalError("expression is expected")
+        }
+
+        guard case .leftBrace = currentToken!.tokenKind else {
+            fatalError("leftBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat {
+
+        guard let then = parseExpression() else {
+            fatalError("expression is expected")
+        }
+
+        guard case .rightBrace = currentToken!.tokenKind else {
+            fatalError("rightBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat }
+
+        guard case .elseKeyword = currentToken!.tokenKind else {
+            fatalError("else is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat else
+
+        guard case .leftBrace = currentToken!.tokenKind else {
+            fatalError("leftBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat {
+
+        guard let `else` = parseExpression() else {
+            fatalError("expression is expected")
+        }
+
+        guard case .rightBrace = currentToken!.tokenKind else {
+            fatalError("rightBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat }
+
+        return IfElseNode(condition: condition, then: then, else: `else`)
     }
 
     // PROBABLY WORKS WELL, TRUST ME
