@@ -420,6 +420,12 @@ class Parser: SyntaxVisitor {
             case .identifier("Double"):
                 read() // eat Double
                 return Type.double
+            case .identifier("Int"):
+                read() // eat Int
+                return Type.int
+            case .identifier("Void"):
+                read() // eat Void
+                return Type.void
             default:
                 fatalError("type name is expected but received \(currentToken.tokenKind)")
         }

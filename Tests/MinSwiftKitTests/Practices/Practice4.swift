@@ -11,6 +11,18 @@ class Practice4: ParserTestCase {
         let argument = parser.parseFunctionDefinitionArgument()
         XCTAssertEqual(argument.label, "a")
         XCTAssertEqual(argument.variableName, "a")
+        XCTAssertEqual(argument.valueType, Type.double)
+        XCTAssertEqual(parser.currentToken.tokenKind, .eof)
+    }
+
+    // 4-1ex
+    func testParsingArgumentInt() {
+        load("a: Int")
+
+        let argument = parser.parseFunctionDefinitionArgument()
+        XCTAssertEqual(argument.label, "a")
+        XCTAssertEqual(argument.variableName, "a")
+        XCTAssertEqual(argument.valueType, Type.int)
         XCTAssertEqual(parser.currentToken.tokenKind, .eof)
     }
 
