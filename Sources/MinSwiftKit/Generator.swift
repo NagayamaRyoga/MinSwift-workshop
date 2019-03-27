@@ -49,11 +49,15 @@ extension Generator where NodeType == NumberNode {
     }
 }
 
-//extension Generator where NodeType == VariableNode {
-//    func generate(with context: BuildContext) -> IRValue {
-//        fatalError("Not Implemented")
-//    }
-//}
+extension Generator where NodeType == VariableNode {
+   func generate(with context: BuildContext) -> IRValue {
+       guard let value = context.namedValues[node.identifier] else {
+           fatalError("Undefined variable \(node.identifier)")
+       }
+
+       return value
+   }
+}
 
 // ...
 
