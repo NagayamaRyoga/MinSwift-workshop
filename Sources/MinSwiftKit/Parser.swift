@@ -112,6 +112,8 @@ class Parser: SyntaxVisitor {
                 return .multication
             case .spacedBinaryOperator("/"):
                 return .division
+            case .spacedBinaryOperator("%"):
+                return .modulo
             case .spacedBinaryOperator("<"):
                 return .lessThan
             case .spacedBinaryOperator("<="):
@@ -412,7 +414,7 @@ private extension BinaryExpressionNode.Operator {
     var precedence: Int {
         switch self {
         case .addition, .subtraction: return 20
-        case .multication, .division: return 40
+        case .multication, .division, .modulo: return 40
         case .lessThan, .lessEqual, .greaterThan, .greaterEqual: return 11
         case .equal, .notEqual: return 10
         }

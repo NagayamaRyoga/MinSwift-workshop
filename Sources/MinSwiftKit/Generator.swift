@@ -73,6 +73,8 @@ extension Generator where NodeType == BinaryExpressionNode {
                 return context.builder.buildMul(left, right, name: "multmp")
             case .division:
                 return context.builder.buildDiv(left, right, name: "divtmp")
+            case .modulo:
+                return context.builder.buildRem(left, right, name: "modtmp")
             case .lessThan:
                 let cmptmp = context.builder.buildFCmp(left, right, .orderedLessThan, name: "cmptmp")
                 return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)

@@ -16,6 +16,7 @@ public struct BinaryExpressionNode: Node {
         case subtraction = "-"
         case multication = "*"
         case division = "/"
+        case modulo = "%"
         case lessThan = "<"
         case lessEqual = "<="
         case greaterThan = ">"

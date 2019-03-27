@@ -121,4 +121,23 @@ class Practice3: ParserTestCase {
 
         XCTAssertEqual(rhs.identifier, "b")
     }
+
+    // 3-6ex
+    func testModuloExpression() {
+        load("a % b")
+        // lhs: a
+        // rhs: b
+        // operator: %
+
+        let expression = parser.parseExpression()
+        XCTAssertTrue(expression is BinaryExpressionNode)
+
+        let binaryNode = expression as! BinaryExpressionNode
+        XCTAssertEqual(binaryNode.operator, .modulo)
+
+        let lhs = binaryNode.lhs as! VariableNode
+        let rhs = binaryNode.rhs as! VariableNode
+        XCTAssertEqual(lhs.identifier, "a")
+        XCTAssertEqual(rhs.identifier, "b")
+    }
 }

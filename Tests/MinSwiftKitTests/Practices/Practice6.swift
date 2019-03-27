@@ -85,6 +85,19 @@ class Practice6: ParserTestCase {
                 generated.dump()
             })
         }
+
+        do {
+            let context = BuildContext()
+
+            let node = BinaryExpressionNode(.modulo,
+                                            lhs: NumberNode(value: 21),
+                                            rhs: NumberNode(value: 2))
+            let generated = generateIRValue(from: node, with: context)
+            XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["ModuloNode"]) {
+                // ModuloNode: double 1.000000e+00
+                generated.dump()
+            })
+        }
     }
 
     // 6-4
