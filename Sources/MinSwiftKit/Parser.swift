@@ -213,8 +213,8 @@ class Parser: SyntaxVisitor {
         }
         read() // eat {
 
-        guard let body = parseReturn() else {
-            fatalError("return statement is expected")
+        guard let body = parseExpression() else {
+            fatalError("expression is expected")
         }
 
         guard case .rightBrace = currentToken!.tokenKind else {
