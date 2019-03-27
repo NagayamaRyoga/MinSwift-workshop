@@ -2,7 +2,7 @@ import Foundation
 import LLVM
 
 @discardableResult
-func generate(from node: Node, with context: BuildContext) -> IRValue {
+func generateIRValue(from node: Node, with context: BuildContext) -> IRValue {
     switch node {
     case let numberNode as NumberNode:
         return Generator<NumberNode>(node: numberNode).generate(with: context)
@@ -61,8 +61,8 @@ extension Generator where NodeType == VariableNode {
 
 extension Generator where NodeType == BinaryExpressionNode {
     func generate(with context: BuildContext) -> IRValue {
-        let left = MinSwiftKit.generate(from: node.lhs, with: context)
-        let right = MinSwiftKit.generate(from: node.rhs, with: context)
+        let left = generateIRValue(from: node.lhs, with: context)
+        let right = generateIRValue(from: node.rhs, with: context)
 
         switch node.operator {
             case .addition:
@@ -83,7 +83,7 @@ extension Generator where NodeType == BinaryExpressionNode {
 extension Generator where NodeType == CallExpressionNode {
     func generate(with context: BuildContext) -> IRValue {
         let arguments: [IRValue] = node.arguments.map {
-            MinSwiftKit.generate(from: $0.value, with: context)
+            generateIRValue(from: $0.value, with: context)
         }
 
         guard let callee = context.module.function(named: node.callee) else {
@@ -97,7 +97,7 @@ extension Generator where NodeType == CallExpressionNode {
 extension Generator where NodeType == ReturnNode {
     func generate(with context: BuildContext) -> IRValue {
         if let body = node.body {
-            let returnValue = MinSwiftKit.generate(from: body, with: context)
+            let returnValue = generateIRValue(from: body, with: context)
             return returnValue
         } else {
             return VoidType().null()
@@ -107,7 +107,7 @@ extension Generator where NodeType == ReturnNode {
 
 extension Generator where NodeType == IfElseNode {
     func generate(with context: BuildContext) -> IRValue {
-        let condition = MinSwiftKit.generate(from: node.condition, with: context)
+        let condition = generateIRValue(from: node.condition, with: context)
         let condBool = context.builder.buildFCmp(condition, FloatType.double.constant(0), .orderedNotEqual, name: "ifcond")
 
         let function = context.builder.insertBlock!.parent!
@@ -118,13 +118,13 @@ extension Generator where NodeType == IfElseNode {
         context.builder.buildCondBr(condition: condBool, then: thenBasicBlock, else: elseBasicBlock)
 
         context.builder.positionAtEnd(of: thenBasicBlock)
-        let thenValue = MinSwiftKit.generate(from: node.then, with: context)
+        let thenValue = generateIRValue(from: node.then, with: context)
         context.builder.buildBr(mergeBasicBlock)
 
         context.builder.positionAtEnd(of: elseBasicBlock)
         let elseValue: IRValue
         if let `else` = node.else {
-            elseValue = MinSwiftKit.generate(from: `else`, with: context)
+            elseValue = generateIRValue(from: `else`, with: context)
         } else {
             elseValue = FloatType.double.constant(0)
         }
@@ -154,7 +154,7 @@ extension Generator where NodeType == FunctionNode {
             map[x.1.variableName] = function.parameters[x.0]
         }
 
-        let functionBody = MinSwiftKit.generate(from: node.body, with: context)
+        let functionBody = generateIRValue(from: node.body, with: context)
 
         context.builder.buildRet(functionBody)
         return functionBody

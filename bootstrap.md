@@ -50,11 +50,13 @@ LLVM (http://llvm.org/):
 
 ```console
 $ which llvm-config
-/usr/local/Cellar/llvm/7.0.1/bin/llvm-config
+/usr/local/opt/llvm@7/7.0.1/bin/llvm-config
 $ git clone https://github.com/giginet/MinSwift-workshop.git
 $ cd MinSwift-workshop
 $ ./bootstrap
 ```
+
+この操作で`MinSwift.xcodeproj`が自動生成されます。
 
 ## 5. CLIからのビルド
 

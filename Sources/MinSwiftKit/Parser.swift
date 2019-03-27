@@ -1,16 +1,6 @@
 import Foundation
 import SwiftSyntax
 
-private extension BinaryExpressionNode.Operator {
-    var precedence: Int {
-        switch self {
-        case .addition, .subtraction: return 20
-        case .multication, .division: return 40
-        case .lessThan: return 10
-        }
-    }
-}
-
 class Parser: SyntaxVisitor {
     private(set) var tokens: [TokenSyntax] = []
     private var index = 0
@@ -47,9 +37,9 @@ class Parser: SyntaxVisitor {
         }
     }
 
-    func parseNumber() -> Node? {
+    func parseNumber() -> Node {
         guard let value = extractNumberLiteral(from: currentToken) else {
-            return nil
+            fatalError("any number is expected")
         }
         read() // eat literal
         return NumberNode(value: value)
@@ -76,9 +66,9 @@ class Parser: SyntaxVisitor {
         return CallExpressionNode.Argument(label: label, value: value)
     }
 
-    func parseIdentifierExpression() -> Node? {
+    func parseIdentifierExpression() -> Node {
         guard case .identifier(let name) = currentToken!.tokenKind else {
-            return nil
+            fatalError("identifier is expected but received \(currentToken.tokenKind)")
         }
         read() // eat identifier
 
@@ -371,7 +361,7 @@ class Parser: SyntaxVisitor {
         return parseBinaryOperatorRHS(expressionPrecedence: 0, lhs: lhs)
     }
 
-    private func parseReturn() -> Node? {
+    private func parseReturn() -> Node {
         guard case .returnKeyword = currentToken.tokenKind else {
             fatalError("returnKeyword is expected but received \(currentToken.tokenKind)")
         }
@@ -405,5 +395,15 @@ class Parser: SyntaxVisitor {
             return anonymousPrototype
         }
         return nil
+    }
+}
+
+private extension BinaryExpressionNode.Operator {
+    var precedence: Int {
+        switch self {
+        case .addition, .subtraction: return 20
+        case .multication, .division: return 40
+        case .lessThan: return 10
+        }
     }
 }
