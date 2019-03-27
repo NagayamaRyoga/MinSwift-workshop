@@ -91,3 +91,26 @@ extension Generator where NodeType == ReturnNode {
         }
     }
 }
+
+extension Generator where NodeType == FunctionNode {
+    func generate(with context: BuildContext) -> IRValue {
+        let argumentTypes: [IRType] = node.arguments.map { _ in FloatType.double }
+        let returnType: IRType = FloatType.double
+        let functionType = FunctionType(argTypes: argumentTypes, returnType: returnType)
+
+        let function = context.builder.addFunction(node.name, type: functionType)
+
+        let entryBasicBlock = function.appendBasicBlock(named: "entry")
+        context.builder.positionAtEnd(of: entryBasicBlock)
+
+        // Register arguments to namedValues
+        context.namedValues = node.arguments.enumerated().reduce(into: [:]) { (map, x) in
+            map[x.1.variableName] = function.parameters[x.0]
+        }
+
+        let functionBody = MinSwiftKit.generate(from: node.body, with: context)
+
+        context.builder.buildRet(functionBody)
+        return functionBody
+    }
+}
