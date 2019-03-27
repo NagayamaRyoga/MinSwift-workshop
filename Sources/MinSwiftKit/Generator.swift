@@ -79,6 +79,20 @@ extension Generator where NodeType == BinaryExpressionNode {
     }
 }
 
+extension Generator where NodeType == CallExpressionNode {
+    func generate(with context: BuildContext) -> IRValue {
+        let arguments: [IRValue] = node.arguments.map {
+            MinSwiftKit.generate(from: $0.value, with: context)
+        }
+
+        guard let callee = context.module.function(named: node.callee) else {
+            fatalError("function \(node.callee) not found")
+        }
+
+        return context.builder.buildCall(callee, args: arguments, name: "calltmp")
+    }
+}
+
 // ...
 
 extension Generator where NodeType == ReturnNode {
