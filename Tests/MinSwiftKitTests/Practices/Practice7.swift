@@ -103,7 +103,6 @@ final class Practice7: ParserTestCase {
             // IfElse-NEXT:     %cmptmp = fcmp olt double %0, 1.000000e+01
             // IfElse-NEXT:     %1 = sitofp i1 %cmptmp to double
             // IfElse-NEXT:     %ifcond = fcmp one double %1, 0.000000e+00
-            // IfElse-NEXT:     %local = alloca double
             // IfElse-NEXT:     br i1 %ifcond, label %then, label %else
             //
             // IfElse:     then:                                             ; preds = %entry
@@ -114,7 +113,6 @@ final class Practice7: ParserTestCase {
             //
             // IfElse:     merge:                                            ; preds = %else, %then
             // IfElse-NEXT:     %phi = phi double [ 1.420000e+02, %then ], [ 4.200000e+01, %else ]
-            // IfElse-NEXT:     store double %phi, double* %local
             // IfElse-NEXT:     ret double %phi
             // IfElse-NEXT: }
             buildContext.dump()

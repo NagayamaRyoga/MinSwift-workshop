@@ -10,7 +10,9 @@ final class Practice8: XCTestCase {
     // 8-1
     func testCube() {
         let source = """
-// WRITE YOUR OWN CODE
+func cube(_ x: Double) -> Double {
+    return x * x * x
+}
 """
         try! engine.load(from: source)
         typealias FunctionType = @convention(c) (Double) -> Double
@@ -23,7 +25,13 @@ final class Practice8: XCTestCase {
     // 8-2
     func testFactorial() {
         let source = """
-// WRITE YOUR OWN CODE
+func factorial(_ n: Double) -> Double {
+    if n < 1 {
+        return 1
+    } else {
+        return n * factorial(n - 1)
+    }
+}
 """
         try! engine.load(from: source)
         typealias FunctionType = @convention(c) (Double) -> Double
@@ -37,7 +45,13 @@ final class Practice8: XCTestCase {
     // 8-3
     func testFibonacci() {
         let source = """
-// WRITE YOUR OWN CODE
+func fibonacci(_ n: Double) -> Double {
+    if n < 2 {
+        return n
+    } else {
+        return fibonacci(n - 1) + fibonacci(n - 2)
+    }
+}
 """
         try! engine.load(from: source)
         typealias FunctionType = @convention(c) (Double) -> Double
