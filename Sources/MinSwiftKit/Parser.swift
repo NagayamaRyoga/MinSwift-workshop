@@ -30,7 +30,7 @@ class Parser: SyntaxVisitor {
     private func extractNumberLiteral(from token: TokenSyntax) -> Double? {
         switch token.tokenKind {
             case .integerLiteral, .floatingLiteral:
-                return Double(token.text)
+                return Double(token.text.replacingOccurrences(of: "_", with: ""))
 
             default:
                 return nil

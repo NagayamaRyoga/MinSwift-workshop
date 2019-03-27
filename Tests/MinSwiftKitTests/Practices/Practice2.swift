@@ -36,6 +36,15 @@ class Practice2: ParserTestCase {
         XCTAssertEqual(numberNode.value, -42.195)
         XCTAssertEqual(parser.currentToken.tokenKind, .eof)
     }
+    func testParseNumberSeparator() {
+        load("1_00_0")
+
+        let node = parser.parseNumber()
+        XCTAssertTrue(node is NumberNode)
+        let numberNode = node as! NumberNode
+        XCTAssertEqual(numberNode.value, 1000)
+        XCTAssertEqual(parser.currentToken.tokenKind, .eof)
+    }
 
     // 2-3
     func testIdentifier() {
