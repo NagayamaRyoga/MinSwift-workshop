@@ -211,14 +211,11 @@ class Parser: SyntaxVisitor {
         }
         read() // eat :
 
-        guard case .identifier("Double") = currentToken!.tokenKind else {
-            fatalError("Double is expected but received \(currentToken.tokenKind)")
-        }
-        read() // eat Double
+        let valueType = parseType()
 
         return FunctionNode.Argument(label: isWildcard ? nil : (label ?? name),
                                      variableName: name,
-                                     valueType: Type.double)
+                                     valueType: valueType)
     }
 
     func parseFunctionDefinition() -> Node {
@@ -262,10 +259,7 @@ class Parser: SyntaxVisitor {
         }
         read() // eat ->
 
-        guard case .identifier("Double") = currentToken!.tokenKind else {
-            fatalError("Double is expected but received \(currentToken.tokenKind)")
-        }
-        read() // eat Double
+        let returnType = parseType()
 
         guard case .leftBrace = currentToken!.tokenKind else {
             fatalError("leftBrace is expected but received \(currentToken.tokenKind)")
@@ -281,7 +275,7 @@ class Parser: SyntaxVisitor {
         }
         read() // eat }
 
-        return FunctionNode(name: name, arguments: arguments, returnType: Type.double, body: body)
+        return FunctionNode(name: name, arguments: arguments, returnType: returnType, body: body)
     }
 
     // MARK: Practice 7
@@ -418,6 +412,17 @@ class Parser: SyntaxVisitor {
             return anonymousPrototype
         }
         return nil
+    }
+
+    // MARK: advanced
+    private func parseType() -> Type {
+        switch currentToken!.tokenKind {
+            case .identifier("Double"):
+                read() // eat Double
+                return Type.double
+            default:
+                fatalError("type name is expected but received \(currentToken.tokenKind)")
+        }
     }
 }
 
