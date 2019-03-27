@@ -76,6 +76,21 @@ extension Generator where NodeType == BinaryExpressionNode {
             case .lessThan:
                 let cmptmp = context.builder.buildFCmp(left, right, .orderedLessThan, name: "cmptmp")
                 return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
+            case .lessEqual:
+                let cmptmp = context.builder.buildFCmp(left, right, .orderedLessThanOrEqual, name: "cmptmp")
+                return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
+            case .greaterThan:
+                let cmptmp = context.builder.buildFCmp(left, right, .orderedGreaterThan, name: "cmptmp")
+                return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
+            case .greaterEqual:
+                let cmptmp = context.builder.buildFCmp(left, right, .orderedGreaterThanOrEqual, name: "cmptmp")
+                return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
+            case .equal:
+                let cmptmp = context.builder.buildFCmp(left, right, .orderedEqual, name: "cmptmp")
+                return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
+            case .notEqual:
+                let cmptmp = context.builder.buildFCmp(left, right, .orderedNotEqual, name: "cmptmp")
+                return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
         }
     }
 }

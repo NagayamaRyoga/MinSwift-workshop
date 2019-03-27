@@ -114,6 +114,16 @@ class Parser: SyntaxVisitor {
                 return .division
             case .spacedBinaryOperator("<"):
                 return .lessThan
+            case .spacedBinaryOperator("<="):
+                return .lessEqual
+            case .spacedBinaryOperator(">"):
+                return .greaterThan
+            case .spacedBinaryOperator(">="):
+                return .greaterEqual
+            case .spacedBinaryOperator("=="):
+                return .equal
+            case .spacedBinaryOperator("!="):
+                return .notEqual
             default:
                 return nil
         }
@@ -403,7 +413,8 @@ private extension BinaryExpressionNode.Operator {
         switch self {
         case .addition, .subtraction: return 20
         case .multication, .division: return 40
-        case .lessThan: return 10
+        case .lessThan, .lessEqual, .greaterThan, .greaterEqual: return 11
+        case .equal, .notEqual: return 10
         }
     }
 }

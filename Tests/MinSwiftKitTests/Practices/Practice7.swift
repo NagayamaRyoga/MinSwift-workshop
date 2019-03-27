@@ -26,6 +26,73 @@ final class Practice7: ParserTestCase {
         XCTAssertEqual(rhsNode.operator, .addition)
     }
 
+    // 7-1ex
+    func testParsingComparisonOperatorExLE() {
+        load("a <= 10")
+        // lhs: a
+        // rhs: 10
+        // operator: <=
+
+        let node = parser.parseExpression()
+        XCTAssertTrue(node is BinaryExpressionNode)
+        let comparison = node as! BinaryExpressionNode
+        XCTAssertTrue(comparison.operator == .lessEqual)
+        XCTAssertTrue(comparison.lhs is VariableNode)
+        XCTAssertTrue(comparison.rhs is NumberNode)
+    }
+    func testParsingComparisonOperatorExGT() {
+        load("a > 10")
+        // lhs: a
+        // rhs: 10
+        // operator: >
+
+        let node = parser.parseExpression()
+        XCTAssertTrue(node is BinaryExpressionNode)
+        let comparison = node as! BinaryExpressionNode
+        XCTAssertTrue(comparison.operator == .greaterThan)
+        XCTAssertTrue(comparison.lhs is VariableNode)
+        XCTAssertTrue(comparison.rhs is NumberNode)
+    }
+    func testParsingComparisonOperatorExGE() {
+        load("a >= 10")
+        // lhs: a
+        // rhs: 10
+        // operator: >=
+
+        let node = parser.parseExpression()
+        XCTAssertTrue(node is BinaryExpressionNode)
+        let comparison = node as! BinaryExpressionNode
+        XCTAssertTrue(comparison.operator == .greaterEqual)
+        XCTAssertTrue(comparison.lhs is VariableNode)
+        XCTAssertTrue(comparison.rhs is NumberNode)
+    }
+    func testParsingComparisonOperatorExEq() {
+        load("a == 10")
+        // lhs: a
+        // rhs: 10
+        // operator: ==
+
+        let node = parser.parseExpression()
+        XCTAssertTrue(node is BinaryExpressionNode)
+        let comparison = node as! BinaryExpressionNode
+        XCTAssertTrue(comparison.operator == .equal)
+        XCTAssertTrue(comparison.lhs is VariableNode)
+        XCTAssertTrue(comparison.rhs is NumberNode)
+    }
+    func testParsingComparisonOperatorExNe() {
+        load("a != 10")
+        // lhs: a
+        // rhs: 10
+        // operator: !=
+
+        let node = parser.parseExpression()
+        XCTAssertTrue(node is BinaryExpressionNode)
+        let comparison = node as! BinaryExpressionNode
+        XCTAssertTrue(comparison.operator == .notEqual)
+        XCTAssertTrue(comparison.lhs is VariableNode)
+        XCTAssertTrue(comparison.rhs is NumberNode)
+    }
+
     // 7-2
     func testParsingIfElse() {
         load("""
@@ -99,6 +166,128 @@ final class Practice7: ParserTestCase {
             // CompOperator-NEXT:     %1 = sitofp i1 %cmptmp to double
             // CompOperator-NEXT:     ret double %1
             // CompOperator-NEXT: }
+            buildContext.dump()
+        })
+    }
+
+    // 7-3ex
+    func testGenerateCompOperatorExLE() {
+        let variableNode = VariableNode(identifier: "a")
+        let numberNode = NumberNode(value: 10)
+        let body = BinaryExpressionNode(.lessEqual, lhs: variableNode, rhs: numberNode)
+        let node = FunctionNode(name: "main",
+                                arguments: [.init(label: nil, variableName: "a")],
+                                returnType: .double,
+                                body: body)
+
+        let buildContext = BuildContext()
+        build([node], context: buildContext)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["CompOperatorLE"]) {
+            // CompOperatorLE: ; ModuleID = 'main'
+            // CompOperatorLE-NEXT: source_filename = "main"
+
+            // CompOperatorLE: define double @main(double) {
+            // CompOperatorLE-NEXT:     entry:
+            // CompOperatorLE-NEXT:     %cmptmp = fcmp ole double %0, 1.000000e+01
+            // CompOperatorLE-NEXT:     %1 = sitofp i1 %cmptmp to double
+            // CompOperatorLE-NEXT:     ret double %1
+            // CompOperatorLE-NEXT: }
+            buildContext.dump()
+        })
+    }
+    func testGenerateCompOperatorExGT() {
+        let variableNode = VariableNode(identifier: "a")
+        let numberNode = NumberNode(value: 10)
+        let body = BinaryExpressionNode(.greaterThan, lhs: variableNode, rhs: numberNode)
+        let node = FunctionNode(name: "main",
+                                arguments: [.init(label: nil, variableName: "a")],
+                                returnType: .double,
+                                body: body)
+
+        let buildContext = BuildContext()
+        build([node], context: buildContext)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["CompOperatorGT"]) {
+            // CompOperatorGT: ; ModuleID = 'main'
+            // CompOperatorGT-NEXT: source_filename = "main"
+
+            // CompOperatorGT: define double @main(double) {
+            // CompOperatorGT-NEXT:     entry:
+            // CompOperatorGT-NEXT:     %cmptmp = fcmp ogt double %0, 1.000000e+01
+            // CompOperatorGT-NEXT:     %1 = sitofp i1 %cmptmp to double
+            // CompOperatorGT-NEXT:     ret double %1
+            // CompOperatorGT-NEXT: }
+            buildContext.dump()
+        })
+    }
+    func testGenerateCompOperatorExGE() {
+        let variableNode = VariableNode(identifier: "a")
+        let numberNode = NumberNode(value: 10)
+        let body = BinaryExpressionNode(.greaterEqual, lhs: variableNode, rhs: numberNode)
+        let node = FunctionNode(name: "main",
+                                arguments: [.init(label: nil, variableName: "a")],
+                                returnType: .double,
+                                body: body)
+
+        let buildContext = BuildContext()
+        build([node], context: buildContext)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["CompOperatorGE"]) {
+            // CompOperatorGE: ; ModuleID = 'main'
+            // CompOperatorGE-NEXT: source_filename = "main"
+
+            // CompOperatorGE: define double @main(double) {
+            // CompOperatorGE-NEXT:     entry:
+            // CompOperatorGE-NEXT:     %cmptmp = fcmp oge double %0, 1.000000e+01
+            // CompOperatorGE-NEXT:     %1 = sitofp i1 %cmptmp to double
+            // CompOperatorGE-NEXT:     ret double %1
+            // CompOperatorGE-NEXT: }
+            buildContext.dump()
+        })
+    }
+    func testGenerateCompOperatorExEq() {
+        let variableNode = VariableNode(identifier: "a")
+        let numberNode = NumberNode(value: 10)
+        let body = BinaryExpressionNode(.equal, lhs: variableNode, rhs: numberNode)
+        let node = FunctionNode(name: "main",
+                                arguments: [.init(label: nil, variableName: "a")],
+                                returnType: .double,
+                                body: body)
+
+        let buildContext = BuildContext()
+        build([node], context: buildContext)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["CompOperatorEq"]) {
+            // CompOperatorEq: ; ModuleID = 'main'
+            // CompOperatorEq-NEXT: source_filename = "main"
+
+            // CompOperatorEq: define double @main(double) {
+            // CompOperatorEq-NEXT:     entry:
+            // CompOperatorEq-NEXT:     %cmptmp = fcmp oeq double %0, 1.000000e+01
+            // CompOperatorEq-NEXT:     %1 = sitofp i1 %cmptmp to double
+            // CompOperatorEq-NEXT:     ret double %1
+            // CompOperatorEq-NEXT: }
+            buildContext.dump()
+        })
+    }
+    func testGenerateCompOperatorExNe() {
+        let variableNode = VariableNode(identifier: "a")
+        let numberNode = NumberNode(value: 10)
+        let body = BinaryExpressionNode(.notEqual, lhs: variableNode, rhs: numberNode)
+        let node = FunctionNode(name: "main",
+                                arguments: [.init(label: nil, variableName: "a")],
+                                returnType: .double,
+                                body: body)
+
+        let buildContext = BuildContext()
+        build([node], context: buildContext)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["CompOperatorNe"]) {
+            // CompOperatorNe: ; ModuleID = 'main'
+            // CompOperatorNe-NEXT: source_filename = "main"
+
+            // CompOperatorNe: define double @main(double) {
+            // CompOperatorNe-NEXT:     entry:
+            // CompOperatorNe-NEXT:     %cmptmp = fcmp one double %0, 1.000000e+01
+            // CompOperatorNe-NEXT:     %1 = sitofp i1 %cmptmp to double
+            // CompOperatorNe-NEXT:     ret double %1
+            // CompOperatorNe-NEXT: }
             buildContext.dump()
         })
     }

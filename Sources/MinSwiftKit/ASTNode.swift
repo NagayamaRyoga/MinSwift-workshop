@@ -17,6 +17,11 @@ public struct BinaryExpressionNode: Node {
         case multication = "*"
         case division = "/"
         case lessThan = "<"
+        case lessEqual = "<="
+        case greaterThan = ">"
+        case greaterEqual = ">="
+        case equal = "=="
+        case notEqual = "!="
     }
     public let `operator`: Operator
     public let lhs: Node
