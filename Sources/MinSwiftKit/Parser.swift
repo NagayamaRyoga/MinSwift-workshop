@@ -38,11 +38,20 @@ class Parser: SyntaxVisitor {
     }
 
     func parseNumber() -> Node {
+        let negative: Bool
+        if case .prefixOperator("-") = currentToken!.tokenKind {
+            read() // eat -
+
+            negative = true
+        } else {
+            negative = false
+        }
+
         guard let value = extractNumberLiteral(from: currentToken) else {
             fatalError("any number is expected")
         }
         read() // eat literal
-        return NumberNode(value: value)
+        return NumberNode(value: negative ? -value : value)
     }
 
     func parseCallExpressionArgument() -> CallExpressionNode.Argument {
@@ -349,7 +358,7 @@ class Parser: SyntaxVisitor {
         switch currentToken.tokenKind {
         case .identifier:
             return parseIdentifierExpression()
-        case .integerLiteral, .floatingLiteral:
+        case .integerLiteral, .floatingLiteral, .prefixOperator("-"):
             return parseNumber()
         case .leftParen:
             return parseParen()
