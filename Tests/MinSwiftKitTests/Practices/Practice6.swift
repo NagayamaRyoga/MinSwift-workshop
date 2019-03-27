@@ -122,6 +122,28 @@ class Practice6: ParserTestCase {
         })
     }
 
+    // 6-4ex
+    func testFunctionNodeVoid() {
+        let context = BuildContext()
+
+        let body = VoidNode()
+        let node = FunctionNode(name: "main",
+                                arguments: [],
+                                returnType: .void,
+                                body: body)
+        build([node], context: context)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["FunctionNodeVoid"]) {
+            // FunctionNodeVoid: ; ModuleID = 'main'
+            // FunctionNodeVoid-NEXT: source_filename = "main"
+
+            // FunctionNodeVoid: define void @main() {
+            // FunctionNodeVoid-NEXT:     entry:
+            // FunctionNodeVoid-NEXT:     ret void
+            // FunctionNodeVoid-NEXT: }
+            context.dump()
+        })
+    }
+
     // 6-5
     func testCallExpressionNode() {
         let context = BuildContext()

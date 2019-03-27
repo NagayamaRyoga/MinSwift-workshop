@@ -140,4 +140,11 @@ class Practice3: ParserTestCase {
         XCTAssertEqual(lhs.identifier, "a")
         XCTAssertEqual(rhs.identifier, "b")
     }
+
+    func testVoidExpression() {
+        load("()")
+
+        let node = parser.parseExpression()
+        XCTAssertTrue(node is VoidNode)
+    }
 }

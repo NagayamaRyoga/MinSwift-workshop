@@ -101,6 +101,26 @@ func voidfunc() {
         XCTAssertNil((function.body as! ReturnNode).body)
         XCTAssertEqual(parser.currentToken.tokenKind, .eof)
     }
+    func testSimpleFunctionDefinitionVoid3() {
+        load("""
+func voidfunc() {
+    return ()
+}
+""")
+
+        // You already have `parseExpression` to parse function body.
+        let node = parser.parseFunctionDefinition()
+        XCTAssertTrue(node is FunctionNode)
+
+        let function = node as! FunctionNode
+        XCTAssertEqual(function.name, "voidfunc")
+        XCTAssertEqual(function.returnType, .void)
+        XCTAssertTrue(function.arguments.isEmpty)
+
+        XCTAssertTrue(function.body is ReturnNode)
+
+        XCTAssertTrue((function.body as! ReturnNode).body is VoidNode)
+    }
 
     // 4-3
     func testFunctionWithArgument() {

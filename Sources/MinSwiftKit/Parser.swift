@@ -390,14 +390,20 @@ class Parser: SyntaxVisitor {
         }
     }
 
-    private func parseParen() -> Node? {
+    private func parseParen() -> Node {
         read() // eat (
+
+        if case .rightParen = currentToken!.tokenKind {
+            read() // eat )
+            return VoidNode()
+        }
+
         guard let v = parseExpression() else {
-            return nil
+            fatalError("expected expression")
         }
 
         guard case .rightParen = currentToken.tokenKind else {
-                fatalError("expected ')'")
+            fatalError("expected ')'")
         }
         read() // eat )
 

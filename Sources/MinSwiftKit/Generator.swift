@@ -18,6 +18,8 @@ func generateIRValue(from node: Node, with context: BuildContext) -> IRValue {
         return Generator<IfElseNode>(node: ifElseNode).generate(with: context)
     case let returnNode as ReturnNode:
         return Generator<ReturnNode>(node: returnNode).generate(with: context)
+    case let voidNode as VoidNode:
+        return Generator<VoidNode>(node: voidNode).generate(with: context)
     default:
         fatalError("Unknown node type \(type(of: node))")
     }
@@ -122,6 +124,12 @@ extension Generator where NodeType == ReturnNode {
     }
 }
 
+extension Generator where NodeType == VoidNode {
+    func generate(with context: BuildContext) -> IRValue {
+        return VoidType().null()
+    }
+}
+
 extension Generator where NodeType == IfElseNode {
     func generate(with context: BuildContext) -> IRValue {
         let condition = generateIRValue(from: node.condition, with: context)
@@ -157,8 +165,8 @@ extension Generator where NodeType == IfElseNode {
 
 extension Generator where NodeType == FunctionNode {
     func generate(with context: BuildContext) -> IRValue {
-        let argumentTypes: [IRType] = node.arguments.map { _ in FloatType.double }
-        let returnType: IRType = FloatType.double
+        let argumentTypes: [IRType] = node.arguments.map { $0.valueType.toIRType() }
+        let returnType = node.returnType.toIRType()
         let functionType = FunctionType(argTypes: argumentTypes, returnType: returnType)
 
         let function = context.builder.addFunction(node.name, type: functionType)
@@ -175,5 +183,18 @@ extension Generator where NodeType == FunctionNode {
 
         context.builder.buildRet(functionBody)
         return functionBody
+    }
+}
+
+extension Type {
+    func toIRType() -> IRType {
+        switch self {
+        case .double:
+            return FloatType.double
+        case .int:
+            return IntType.int64
+        case .void:
+            return VoidType()
+        }
     }
 }
