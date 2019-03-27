@@ -254,12 +254,13 @@ class Parser: SyntaxVisitor {
         }
         read() // eat )
 
-        guard case .arrow = currentToken!.tokenKind else {
-            fatalError("arrow is expected but received \(currentToken.tokenKind)")
+        let returnType: Type
+        if case .arrow = currentToken!.tokenKind {
+            read() // eat ->
+            returnType = parseType()
+        } else {
+            returnType = Type.void
         }
-        read() // eat ->
-
-        let returnType = parseType()
 
         guard case .leftBrace = currentToken!.tokenKind else {
             fatalError("leftBrace is expected but received \(currentToken.tokenKind)")
@@ -364,10 +365,8 @@ class Parser: SyntaxVisitor {
             return parseReturn()
         case .ifKeyword:
             return parseIfElse()
-        case .eof:
-            return nil
         default:
-            fatalError("Unexpected token \(currentToken.tokenKind) \(currentToken.text)")
+            return nil
         }
     }
 

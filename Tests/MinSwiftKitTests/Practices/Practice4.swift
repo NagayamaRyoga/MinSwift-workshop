@@ -58,6 +58,50 @@ func calculate() -> Double {
         XCTAssertEqual(parser.currentToken.tokenKind, .eof)
     }
 
+    // 4-2ex
+    func testSimpleFunctionDefinitionVoid() {
+        load("""
+func voidfunc() -> Void {
+    return
+}
+""")
+
+        // You already have `parseExpression` to parse function body.
+        let node = parser.parseFunctionDefinition()
+        XCTAssertTrue(node is FunctionNode)
+
+        let function = node as! FunctionNode
+        XCTAssertEqual(function.name, "voidfunc")
+        XCTAssertEqual(function.returnType, .void)
+        XCTAssertTrue(function.arguments.isEmpty)
+
+        XCTAssertTrue(function.body is ReturnNode)
+
+        XCTAssertNil((function.body as! ReturnNode).body)
+        XCTAssertEqual(parser.currentToken.tokenKind, .eof)
+    }
+    func testSimpleFunctionDefinitionVoid2() {
+        load("""
+func voidfunc() {
+    return
+}
+""")
+
+        // You already have `parseExpression` to parse function body.
+        let node = parser.parseFunctionDefinition()
+        XCTAssertTrue(node is FunctionNode)
+
+        let function = node as! FunctionNode
+        XCTAssertEqual(function.name, "voidfunc")
+        XCTAssertEqual(function.returnType, .void)
+        XCTAssertTrue(function.arguments.isEmpty)
+
+        XCTAssertTrue(function.body is ReturnNode)
+
+        XCTAssertNil((function.body as! ReturnNode).body)
+        XCTAssertEqual(parser.currentToken.tokenKind, .eof)
+    }
+
     // 4-3
     func testFunctionWithArgument() {
         load("""
