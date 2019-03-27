@@ -178,6 +178,21 @@ class Parser: SyntaxVisitor {
         }
         read() // eat (
 
+        var arguments: [FunctionNode.Argument] = []
+
+        if case .rightParen = currentToken!.tokenKind {} else {
+            while true {
+                if arguments.count > 0 {
+                    guard case .comma = currentToken!.tokenKind else {
+                        break
+                    }
+                    read() // eat ,
+                }
+
+                arguments.append(parseFunctionDefinitionArgument())
+            }
+        }
+
         guard case .rightParen = currentToken!.tokenKind else {
             fatalError("rightParen is expected but received \(currentToken.tokenKind)")
         }
@@ -207,7 +222,7 @@ class Parser: SyntaxVisitor {
         }
         read() // eat }
 
-        return FunctionNode(name: name, arguments: [], returnType: Type.double, body: body)
+        return FunctionNode(name: name, arguments: arguments, returnType: Type.double, body: body)
     }
 
     // MARK: Practice 7
