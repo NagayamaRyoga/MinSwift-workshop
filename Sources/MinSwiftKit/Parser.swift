@@ -298,7 +298,7 @@ class Parser: SyntaxVisitor {
         read() // eat }
 
         guard case .elseKeyword = currentToken!.tokenKind else {
-            fatalError("else is expected but received \(currentToken.tokenKind)")
+            return IfElseNode(condition: condition, then: then, else: nil)
         }
         read() // eat else
 

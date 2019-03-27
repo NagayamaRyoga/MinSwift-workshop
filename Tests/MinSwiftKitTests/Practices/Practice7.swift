@@ -53,6 +53,30 @@ final class Practice7: ParserTestCase {
         XCTAssertEqual((elseBlock as! CallExpressionNode).callee, "foo")
     }
 
+    // 7-2ex
+    func testParsingIf() {
+        load("""
+    if a < 10 {
+        foo(a: a)
+    }
+    """)
+
+        let node = parser.parseIfElse()
+
+        let ifNode = node as! IfElseNode
+        XCTAssertTrue(ifNode.condition is BinaryExpressionNode)
+        let condition = ifNode.condition as! BinaryExpressionNode
+        XCTAssertTrue(condition.lhs is VariableNode)
+        XCTAssertTrue(condition.rhs is NumberNode)
+
+        let thenBlock = ifNode.then
+        XCTAssertTrue(thenBlock is CallExpressionNode)
+        XCTAssertEqual((thenBlock as! CallExpressionNode).callee, "foo")
+
+        let elseBlock = ifNode.else
+        XCTAssertNil(elseBlock)
+    }
+
     // 7-3
     func testGenerateCompOperator() {
         let variableNode = VariableNode(identifier: "a")
@@ -115,6 +139,45 @@ final class Practice7: ParserTestCase {
             // IfElse-NEXT:     %phi = phi double [ 1.420000e+02, %then ], [ 4.200000e+01, %else ]
             // IfElse-NEXT:     ret double %phi
             // IfElse-NEXT: }
+            buildContext.dump()
+        })
+    }
+
+    // 7-4ex
+    func testGenerateIf() {
+        let variableNode = VariableNode(identifier: "a")
+        let numberNode = NumberNode(value: 10)
+        let condition = BinaryExpressionNode(.lessThan, lhs: variableNode, rhs: numberNode)
+        let thenBlock = NumberNode(value: 142)
+
+        let ifElseNode = IfElseNode(condition: condition, then: thenBlock, else: nil)
+
+        let globalFunctionNode = FunctionNode(name: "main",
+                                              arguments: [.init(label: nil, variableName: "a")],
+                                              returnType: .double,
+                                              body: ifElseNode)
+        let buildContext = BuildContext()
+        build([globalFunctionNode], context: buildContext)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["If"]) {
+            // If: ; ModuleID = 'main'
+            // If-NEXT: source_filename = "main"
+            // If: define double @main(double) {
+            // If-NEXT:     entry:
+            // If-NEXT:     %cmptmp = fcmp olt double %0, 1.000000e+01
+            // If-NEXT:     %1 = sitofp i1 %cmptmp to double
+            // If-NEXT:     %ifcond = fcmp one double %1, 0.000000e+00
+            // If-NEXT:     br i1 %ifcond, label %then, label %else
+            //
+            // If:     then:                                             ; preds = %entry
+            // If-NEXT:     br label %merge
+            //
+            // If:     else:                                             ; preds = %entry
+            // If-NEXT:     br label %merge
+            //
+            // If:     merge:                                            ; preds = %else, %then
+            // If-NEXT:     %phi = phi double [ 1.420000e+02, %then ], [ 0.000000e+00, %else ]
+            // If-NEXT:     ret double %phi
+            // If-NEXT: }
             buildContext.dump()
         })
     }
