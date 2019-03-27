@@ -74,7 +74,8 @@ extension Generator where NodeType == BinaryExpressionNode {
             case .division:
                 return context.builder.buildDiv(left, right, name: "divtmp")
             case .lessThan:
-               fatalError("Not implemented")
+                let cmptmp = context.builder.buildFCmp(left, right, .orderedLessThan, name: "cmptmp")
+                return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
         }
     }
 }
@@ -93,8 +94,6 @@ extension Generator where NodeType == CallExpressionNode {
     }
 }
 
-// ...
-
 extension Generator where NodeType == ReturnNode {
     func generate(with context: BuildContext) -> IRValue {
         if let body = node.body {
@@ -103,6 +102,39 @@ extension Generator where NodeType == ReturnNode {
         } else {
             return VoidType().null()
         }
+    }
+}
+
+extension Generator where NodeType == IfElseNode {
+    func generate(with context: BuildContext) -> IRValue {
+        let condition = MinSwiftKit.generate(from: node.condition, with: context)
+        let condBool = context.builder.buildFCmp(condition, FloatType.double.constant(0), .orderedNotEqual, name: "ifcond")
+
+        let function = context.builder.insertBlock!.parent!
+        let thenBasicBlock = function.appendBasicBlock(named: "then")
+        let elseBasicBlock = function.appendBasicBlock(named: "else")
+        let mergeBasicBlock = function.appendBasicBlock(named: "merge")
+
+        context.builder.buildCondBr(condition: condBool, then: thenBasicBlock, else: elseBasicBlock)
+
+        context.builder.positionAtEnd(of: thenBasicBlock)
+        let thenValue = MinSwiftKit.generate(from: node.then, with: context)
+        context.builder.buildBr(mergeBasicBlock)
+
+        context.builder.positionAtEnd(of: elseBasicBlock)
+        let elseValue: IRValue
+        if let `else` = node.else {
+            elseValue = MinSwiftKit.generate(from: `else`, with: context)
+        } else {
+            elseValue = FloatType.double.constant(0)
+        }
+        context.builder.buildBr(mergeBasicBlock)
+
+        context.builder.positionAtEnd(of: mergeBasicBlock)
+        let phi = context.builder.buildPhi(FloatType.double, name: "phi")
+        phi.addIncoming([(thenValue, thenBasicBlock), (elseValue, elseBasicBlock)])
+
+        return phi
     }
 }
 
