@@ -216,7 +216,9 @@ class Parser: SyntaxVisitor {
         }
         read() // eat Double
 
-        return FunctionNode.Argument(label: isWildcard ? nil : (label ?? name), variableName: name)
+        return FunctionNode.Argument(label: isWildcard ? nil : (label ?? name),
+                                     variableName: name,
+                                     valueType: Type.double)
     }
 
     func parseFunctionDefinition() -> Node {

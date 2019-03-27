@@ -150,7 +150,7 @@ final class Practice7: ParserTestCase {
         let numberNode = NumberNode(value: 10)
         let body = BinaryExpressionNode(.lessThan, lhs: variableNode, rhs: numberNode)
         let node = FunctionNode(name: "main",
-                                arguments: [.init(label: nil, variableName: "a")],
+                                arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                 returnType: .double,
                                 body: body)
 
@@ -176,7 +176,7 @@ final class Practice7: ParserTestCase {
         let numberNode = NumberNode(value: 10)
         let body = BinaryExpressionNode(.lessEqual, lhs: variableNode, rhs: numberNode)
         let node = FunctionNode(name: "main",
-                                arguments: [.init(label: nil, variableName: "a")],
+                                arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                 returnType: .double,
                                 body: body)
 
@@ -200,7 +200,7 @@ final class Practice7: ParserTestCase {
         let numberNode = NumberNode(value: 10)
         let body = BinaryExpressionNode(.greaterThan, lhs: variableNode, rhs: numberNode)
         let node = FunctionNode(name: "main",
-                                arguments: [.init(label: nil, variableName: "a")],
+                                arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                 returnType: .double,
                                 body: body)
 
@@ -224,7 +224,7 @@ final class Practice7: ParserTestCase {
         let numberNode = NumberNode(value: 10)
         let body = BinaryExpressionNode(.greaterEqual, lhs: variableNode, rhs: numberNode)
         let node = FunctionNode(name: "main",
-                                arguments: [.init(label: nil, variableName: "a")],
+                                arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                 returnType: .double,
                                 body: body)
 
@@ -248,7 +248,7 @@ final class Practice7: ParserTestCase {
         let numberNode = NumberNode(value: 10)
         let body = BinaryExpressionNode(.equal, lhs: variableNode, rhs: numberNode)
         let node = FunctionNode(name: "main",
-                                arguments: [.init(label: nil, variableName: "a")],
+                                arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                 returnType: .double,
                                 body: body)
 
@@ -272,7 +272,7 @@ final class Practice7: ParserTestCase {
         let numberNode = NumberNode(value: 10)
         let body = BinaryExpressionNode(.notEqual, lhs: variableNode, rhs: numberNode)
         let node = FunctionNode(name: "main",
-                                arguments: [.init(label: nil, variableName: "a")],
+                                arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                 returnType: .double,
                                 body: body)
 
@@ -303,7 +303,7 @@ final class Practice7: ParserTestCase {
         let ifElseNode = IfElseNode(condition: condition, then: thenBlock, else: elseBlock)
 
         let globalFunctionNode = FunctionNode(name: "main",
-                                              arguments: [.init(label: nil, variableName: "a")],
+                                              arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                               returnType: .double,
                                               body: ifElseNode)
         let buildContext = BuildContext()
@@ -342,7 +342,7 @@ final class Practice7: ParserTestCase {
         let ifElseNode = IfElseNode(condition: condition, then: thenBlock, else: nil)
 
         let globalFunctionNode = FunctionNode(name: "main",
-                                              arguments: [.init(label: nil, variableName: "a")],
+                                              arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                               returnType: .double,
                                               body: ifElseNode)
         let buildContext = BuildContext()

@@ -106,7 +106,7 @@ class Practice6: ParserTestCase {
 
         let body = VariableNode(identifier: "a")
         let node = FunctionNode(name: "main",
-                                arguments: [.init(label: nil, variableName: "a")],
+                                arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                 returnType: .double,
                                 body: body)
         build([node], context: context)
@@ -127,7 +127,7 @@ class Practice6: ParserTestCase {
         let context = BuildContext()
 
         let functionNode = FunctionNode(name: "main",
-                                        arguments: [.init(label: nil, variableName: "a")],
+                                        arguments: [.init(label: nil, variableName: "a", valueType: Type.double)],
                                         returnType: .double,
                                         body: ReturnNode(body: VariableNode(identifier: "a")))
         let call = CallExpressionNode(callee: "main",
@@ -157,7 +157,7 @@ class Practice6: ParserTestCase {
                                             rhs: VariableNode(identifier: "x"))
             let returnNode = ReturnNode(body: body)
             build([
-                FunctionNode(name: "square", arguments: [.init(label: nil, variableName: "x")], returnType: .double, body: returnNode)
+                FunctionNode(name: "square", arguments: [.init(label: nil, variableName: "x", valueType: Type.double)], returnType: .double, body: returnNode)
                 ],
                   context: buildContext)
             buildContext.dump()

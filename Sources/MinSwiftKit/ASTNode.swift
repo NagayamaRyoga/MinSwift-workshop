@@ -44,11 +44,12 @@ public struct FunctionNode: Node {
     public struct Argument {
         var label: String?
         var variableName: String
-        // var valueType: Type // Currently support double only
+        var valueType: Type
 
-        public init(label: String?, variableName: String) {
+        public init(label: String?, variableName: String, valueType: Type) {
             self.label = label
             self.variableName = variableName
+            self.valueType = valueType
         }
     }
 
