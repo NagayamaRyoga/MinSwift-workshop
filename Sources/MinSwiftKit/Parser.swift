@@ -163,7 +163,51 @@ class Parser: SyntaxVisitor {
     }
 
     func parseFunctionDefinition() -> Node {
-        fatalError("Not Implemented")
+        guard case .funcKeyword = currentToken!.tokenKind else {
+            fatalError("funcKeyword is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat func
+
+        guard case .identifier(let name) = currentToken!.tokenKind else {
+            fatalError("identifier is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat identifier
+
+        guard case .leftParen = currentToken!.tokenKind else {
+            fatalError("leftParen is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat (
+
+        guard case .rightParen = currentToken!.tokenKind else {
+            fatalError("rightParen is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat )
+
+        guard case .arrow = currentToken!.tokenKind else {
+            fatalError("arrow is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat ->
+
+        guard case .identifier("Double") = currentToken!.tokenKind else {
+            fatalError("Double is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat Double
+
+        guard case .leftBrace = currentToken!.tokenKind else {
+            fatalError("leftBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat {
+
+        guard let body = parseReturn() else {
+            fatalError("return statement is expected")
+        }
+
+        guard case .rightBrace = currentToken!.tokenKind else {
+            fatalError("rightBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat }
+
+        return FunctionNode(name: name, arguments: [], returnType: Type.double, body: body)
     }
 
     // MARK: Practice 7
