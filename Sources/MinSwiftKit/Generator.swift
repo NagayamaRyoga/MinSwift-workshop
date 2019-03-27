@@ -59,6 +59,26 @@ extension Generator where NodeType == VariableNode {
    }
 }
 
+extension Generator where NodeType == BinaryExpressionNode {
+    func generate(with context: BuildContext) -> IRValue {
+        let left = MinSwiftKit.generate(from: node.lhs, with: context)
+        let right = MinSwiftKit.generate(from: node.rhs, with: context)
+
+        switch node.operator {
+            case .addition:
+                return context.builder.buildAdd(left, right, name: "addtmp")
+            case .subtraction:
+                return context.builder.buildSub(left, right, name: "subtmp")
+            case .multication:
+                return context.builder.buildMul(left, right, name: "multmp")
+            case .division:
+                return context.builder.buildDiv(left, right, name: "divtmp")
+            case .lessThan:
+               fatalError("Not implemented")
+        }
+    }
+}
+
 // ...
 
 extension Generator where NodeType == ReturnNode {
