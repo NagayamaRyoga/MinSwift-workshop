@@ -56,12 +56,59 @@ class Parser: SyntaxVisitor {
         return NumberNode(value: value)
     }
 
+    func parseCallExpressionArgument() -> CallExpressionNode.Argument {
+        let label: String?
+        if case .colon = peek().tokenKind {
+            guard case .identifier(let text) = currentToken!.tokenKind else {
+                fatalError("identifier is expected but received \(currentToken.tokenKind)")
+            }
+            read() // eat identifier
+            read() // eat colon
+
+            label = text
+        } else {
+            label = nil
+        }
+
+        guard let value = parseExpression() else {
+            fatalError("expression is expected")
+        }
+
+        return CallExpressionNode.Argument(label: label, value: value)
+    }
+
     func parseIdentifierExpression() -> Node? {
-        guard case .identifier(let text) = currentToken!.tokenKind else {
+        guard case .identifier(let name) = currentToken!.tokenKind else {
             return nil
         }
         read() // eat identifier
-        return VariableNode(identifier: text)
+
+        guard case .leftParen = currentToken!.tokenKind else {
+            return VariableNode(identifier: name)
+        }
+        read() // eat (
+
+        var arguments: [CallExpressionNode.Argument] = []
+
+        if case .rightParen = currentToken!.tokenKind {} else {
+            while true {
+                if arguments.count > 0 {
+                    guard case .comma = currentToken!.tokenKind else {
+                        break
+                    }
+                    read() // eat ,
+                }
+
+                arguments.append(parseCallExpressionArgument())
+            }
+        }
+
+        guard case .rightParen = currentToken!.tokenKind else {
+            fatalError("rightParen is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat )
+
+        return CallExpressionNode(callee: name, arguments: arguments)
     }
 
     // MARK: Practice 3
@@ -274,7 +321,6 @@ class Parser: SyntaxVisitor {
         default:
             fatalError("Unexpected token \(currentToken.tokenKind) \(currentToken.text)")
         }
-        return nil
     }
 
     func parseExpression() -> Node? {
