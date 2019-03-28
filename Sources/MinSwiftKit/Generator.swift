@@ -20,6 +20,8 @@ func generateIRValue(from node: Node, with context: BuildContext) -> IRValue {
         return Generator<ReturnNode>(node: returnNode).generate(with: context)
     case let voidNode as VoidNode:
         return Generator<VoidNode>(node: voidNode).generate(with: context)
+    case let letNode as LetNode:
+        return Generator<LetNode>(node: letNode).generate(with: context)
     default:
         fatalError("Unknown node type \(type(of: node))")
     }
@@ -183,6 +185,22 @@ extension Generator where NodeType == FunctionNode {
 
         context.builder.buildRet(functionBody)
         return functionBody
+    }
+}
+
+extension Generator where NodeType == LetNode {
+    func generate(with context: BuildContext) -> IRValue {
+        if context.namedValues[node.identifier] != nil {
+            fatalError("variable \(node.identifier) is already defined")
+        }
+
+        let initial = generateIRValue(from: node.initializer, with: context)
+
+        context.namedValues[node.identifier] = initial
+
+        let body = generateIRValue(from: node.body, with: context)
+
+        return body
     }
 }
 

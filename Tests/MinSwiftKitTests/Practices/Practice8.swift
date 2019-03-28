@@ -60,4 +60,19 @@ func fibonacci(_ n: Double) -> Double {
             XCTAssertEqual(fib(20), 6765)
         }
     }
+
+    func testLet() {
+        let source = """
+func double(_ n: Double) -> Double {
+    let a: Double = n * 2.0;
+    return a
+}
+"""
+        try! engine.load(from: source)
+        typealias FunctionType = @convention(c) (Double) -> Double
+        try! engine.run("double", of: FunctionType.self) { double in
+            XCTAssertEqual(double(10), 20)
+            XCTAssertEqual(double(20), 40)
+        }
+    }
 }
