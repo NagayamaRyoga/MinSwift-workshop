@@ -111,3 +111,17 @@ public struct IfElseNode: Node {
 
 public struct VoidNode: Node {
 }
+
+public struct LetNode: Node {
+    public let identifier: String
+    public let valueType: Type
+    public let initializer: Node
+    public let body: Node
+
+    public init(identifier: String, valueType: Type, initializer: Node, body: Node) {
+        self.identifier = identifier
+        self.valueType = valueType
+        self.initializer = initializer
+        self.body = body
+    }
+}

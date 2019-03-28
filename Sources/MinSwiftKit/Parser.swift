@@ -327,6 +327,45 @@ class Parser: SyntaxVisitor {
         return IfElseNode(condition: condition, then: then, else: `else`)
     }
 
+    func parseLet() -> Node {
+        guard case .letKeyword = currentToken!.tokenKind else {
+            fatalError("letKeyword is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat let
+
+        guard case .identifier(let identifier) = currentToken!.tokenKind else {
+            fatalError("identifier is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat identifier
+
+        guard case .colon = currentToken!.tokenKind else {
+            fatalError("colon is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat :
+
+        let valueType = parseType()
+
+        guard case .equal = currentToken!.tokenKind else {
+            fatalError("equal is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat =
+
+        guard let initializer = parseExpression() else {
+            fatalError("expected initializer expression")
+        }
+
+        guard case .semicolon = currentToken!.tokenKind else {
+            fatalError("semi is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat ;
+
+        guard let body = parseExpression() else {
+            fatalError("expected expression after variable declaration")
+        }
+
+        return LetNode(identifier: identifier, valueType: valueType, initializer: initializer, body: body)
+    }
+
     // PROBABLY WORKS WELL, TRUST ME
 
     func parse() -> [Node] {
@@ -365,6 +404,8 @@ class Parser: SyntaxVisitor {
             return parseReturn()
         case .ifKeyword:
             return parseIfElse()
+        case .letKeyword:
+            return parseLet()
         default:
             return nil
         }

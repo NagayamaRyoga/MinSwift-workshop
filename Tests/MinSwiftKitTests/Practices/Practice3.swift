@@ -147,4 +147,11 @@ class Practice3: ParserTestCase {
         let node = parser.parseExpression()
         XCTAssertTrue(node is VoidNode)
     }
+
+    func testLet() {
+        load("let a: Double = 42.0; return a")
+
+        let node = parser.parseExpression()
+        XCTAssertTrue(node is LetNode)
+    }
 }
