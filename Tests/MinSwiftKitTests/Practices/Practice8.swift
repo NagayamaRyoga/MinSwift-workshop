@@ -75,4 +75,20 @@ func double(_ n: Double) -> Double {
             XCTAssertEqual(double(20), 40)
         }
     }
+
+    func testLet2() {
+        let source = """
+func pentaple(_ n: Double) -> Double {
+    let a: Double = n * 4.0;
+    let b: Double = n + n;
+    return a + b
+}
+"""
+        try! engine.load(from: source)
+        typealias FunctionType = @convention(c) (Double) -> Double
+        try! engine.run("pentaple", of: FunctionType.self) { pentaple in
+            XCTAssertEqual(pentaple(10), 60)
+            XCTAssertEqual(pentaple(20), 120)
+        }
+    }
 }
