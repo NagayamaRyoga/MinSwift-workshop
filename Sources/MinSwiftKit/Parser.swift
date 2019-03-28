@@ -368,6 +368,52 @@ class Parser: SyntaxVisitor {
         return LetNode(identifier: identifier, valueType: valueType, initializer: initializer, body: body)
     }
 
+    func parseFor() -> Node {
+        guard case .forKeyword = currentToken!.tokenKind else {
+            fatalError("forKeyword is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat for
+
+        guard case .identifier(let identifier) = currentToken!.tokenKind else {
+            fatalError("identifier is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat identifier
+
+        guard case .inKeyword = currentToken!.tokenKind else {
+            fatalError("inKeyword is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat in
+
+        guard let begin = parseExpression() else {
+            fatalError("expression is expected")
+        }
+
+        guard case .spacedBinaryOperator("...") = currentToken!.tokenKind else {
+            fatalError("... is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat ...
+
+        guard let end = parseExpression() else {
+            fatalError("expression is expected")
+        }
+
+        guard case .leftBrace = currentToken!.tokenKind else {
+            fatalError("leftBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat {
+
+        guard let body = parseExpression() else {
+            fatalError("expression is expected")
+        }
+
+        guard case .rightBrace = currentToken!.tokenKind else {
+            fatalError("rightBrace is expected but received \(currentToken.tokenKind)")
+        }
+        read() // eat }
+
+        return ForNode(identifier: identifier, rangeBegin: begin, rangeEnd: end, body: body)
+    }
+
     // PROBABLY WORKS WELL, TRUST ME
 
     func parse() -> [Node] {
@@ -408,6 +454,8 @@ class Parser: SyntaxVisitor {
             return parseIfElse()
         case .letKeyword:
             return parseLet()
+        case .forKeyword:
+            return parseFor()
         default:
             return nil
         }

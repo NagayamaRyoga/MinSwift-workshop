@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 // Defined in MinSwift
-double fizzbuzz(double);
+void fizzbuzz(double);
 
 // Call from MinSwift
 double printNewLine(void) {

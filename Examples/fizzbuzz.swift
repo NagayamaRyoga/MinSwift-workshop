@@ -1,15 +1,14 @@
-func fizzbuzz(_ n: Double) -> Double {
-    if n > 1 {
-        fizzbuzz(n - 1)
-    };
-    if n % 3 == 0 {
-        printFizz()
-    };
-    if n % 5 == 0 {
-        printBuzz()
-    };
-    if (n % 3 != 0) * (n % 5 != 0) {
-        printDoubleAsInt(n)
-    };
-    printNewLine()
+func fizzbuzz(_ n: Double) {
+    for i in 1 ... n {
+        if i % 3 == 0 {
+            printFizz()
+        };
+        if i % 5 == 0 {
+            printBuzz()
+        };
+        if (i % 3 != 0) * (i % 5 != 0) {
+            printDoubleAsInt(i)
+        };
+        printNewLine()
+    }
 }

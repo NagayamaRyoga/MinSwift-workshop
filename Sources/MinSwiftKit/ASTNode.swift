@@ -126,3 +126,17 @@ public struct LetNode: Node {
         self.body = body
     }
 }
+
+public struct ForNode: Node {
+    public let identifier: String
+    public let rangeBegin: Node
+    public let rangeEnd: Node
+    public let body: Node
+
+    public init(identifier: String, rangeBegin: Node, rangeEnd: Node, body: Node) {
+        self.identifier = identifier
+        self.rangeBegin = rangeBegin
+        self.rangeEnd = rangeEnd
+        self.body = body
+    }
+}

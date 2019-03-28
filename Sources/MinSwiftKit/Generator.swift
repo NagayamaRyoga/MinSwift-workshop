@@ -22,6 +22,8 @@ func generateIRValue(from node: Node, with context: BuildContext) -> IRValue {
         return Generator<VoidNode>(node: voidNode).generate(with: context)
     case let letNode as LetNode:
         return Generator<LetNode>(node: letNode).generate(with: context)
+    case let forNode as ForNode:
+        return Generator<ForNode>(node: forNode).generate(with: context)
     default:
         fatalError("Unknown node type \(type(of: node))")
     }
@@ -190,7 +192,11 @@ extension Generator where NodeType == FunctionNode {
 
         let functionBody = generateIRValue(from: node.body, with: context)
 
-        context.builder.buildRet(functionBody)
+        if node.returnType == Type.void {
+            context.builder.buildRetVoid()
+        } else {
+            context.builder.buildRet(functionBody)
+        }
         return functionBody
     }
 }
@@ -208,6 +214,44 @@ extension Generator where NodeType == LetNode {
         let body = generateIRValue(from: node.body, with: context)
 
         return body
+    }
+}
+
+extension Generator where NodeType == ForNode {
+    func generate(with context: BuildContext) -> IRValue {
+        if context.namedValues[node.identifier] != nil {
+            fatalError("variable \(node.identifier) is already defined")
+        }
+
+        // init block
+        let rangeBegin = generateIRValue(from: node.rangeBegin, with: context)
+        let rangeEnd = generateIRValue(from: node.rangeEnd, with: context)
+
+        let function = context.builder.insertBlock!.parent!
+        let currentBasicBlock = context.builder.insertBlock!
+        let loopBasicBlock = function.appendBasicBlock(named: "loop")
+        let loopEndBasicBlock = function.appendBasicBlock(named: "loopEnd")
+        let nextBasicBlock = function.appendBasicBlock(named: "next")
+
+        context.builder.buildBr(loopBasicBlock)
+        context.builder.positionAtEnd(of: loopBasicBlock)
+
+        let phi = context.builder.buildPhi(FloatType.double, name: "phi")
+        context.namedValues[node.identifier] = phi
+
+        let _body = generateIRValue(from: node.body, with: context)
+        context.builder.buildBr(loopEndBasicBlock)
+
+        context.builder.positionAtEnd(of: loopEndBasicBlock)
+        let next = context.builder.buildAdd(phi, FloatType.double.constant(1.0), name: "next")
+
+        let condition = context.builder.buildFCmp(next, rangeEnd, .orderedLessThanOrEqual, name: "loopcond")
+        context.builder.buildCondBr(condition: condition, then: loopBasicBlock, else: nextBasicBlock)
+
+        phi.addIncoming([(rangeBegin, currentBasicBlock), (next, loopEndBasicBlock)])
+        context.builder.positionAtEnd(of: nextBasicBlock)
+
+        return VoidType().null()
     }
 }
 
