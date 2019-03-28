@@ -107,9 +107,14 @@ extension Generator where NodeType == CallExpressionNode {
             generateIRValue(from: $0.value, with: context)
         }
 
-        guard let callee = context.module.function(named: node.callee) else {
-            fatalError("function \(node.callee) not found")
-        }
+        let callee = context.module.function(named: node.callee) ?? {
+            let argumentTypes: [IRType] = arguments.map { $0.type }
+            let returnType = FloatType.double // TODO: always double
+            let isVarArg = false // TODO: always false
+            let functionType = FunctionType(argTypes: argumentTypes, returnType: returnType, isVarArg: isVarArg)
+
+            return context.builder.addFunction(node.callee, type: functionType)
+        }()
 
         return context.builder.buildCall(callee, args: arguments, name: "calltmp")
     }

@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+import FileCheck
 @testable import MinSwiftKit
 
 final class Practice8: XCTestCase {
@@ -90,5 +91,24 @@ func pentaple(_ n: Double) -> Double {
             XCTAssertEqual(pentaple(10), 60)
             XCTAssertEqual(pentaple(20), 120)
         }
+    }
+
+    func testExternalFunction() {
+        let source = """
+func printer(_ n: Double) -> Double {
+    return printDouble(n)
+}
+"""
+        try! engine.load(from: source)
+        XCTAssertTrue(fileCheckOutput(of: .stderr, withPrefixes: ["ExternalFunction"]) {
+            // ExternalFunction: ; ModuleID = 'main'
+            // ExternalFunction-NEXT: source_filename = "main"
+            // ExternalFunction: define double @printer(double) {
+            // ExternalFunction-NEXT:     entry:
+            // ExternalFunction-NEXT:     %calltmp = call double @printDouble(double %0)
+            // ExternalFunction-NEXT:     ret double %calltmp
+            // ExternalFunction-NEXT: }
+            engine.dump()
+        })
     }
 }

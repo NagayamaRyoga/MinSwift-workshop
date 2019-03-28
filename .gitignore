@@ -2,5 +2,11 @@
 /.build
 /Packages
 /*.xcodeproj
+/.vscode/
+
+*.out
+*.ll
+*.o
+*.s
 
 Settings.xcconfig
