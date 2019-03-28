@@ -23,6 +23,7 @@ public struct BinaryExpressionNode: Node {
         case greaterEqual = ">="
         case equal = "=="
         case notEqual = "!="
+        case semicolon = ";"
     }
     public let `operator`: Operator
     public let lhs: Node

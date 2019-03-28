@@ -97,6 +97,8 @@ extension Generator where NodeType == BinaryExpressionNode {
             case .notEqual:
                 let cmptmp = context.builder.buildFCmp(left, right, .orderedNotEqual, name: "cmptmp")
                 return context.builder.buildIntToFP(cmptmp, type: FloatType.double, signed: true)
+            case .semicolon:
+                return right
         }
     }
 }

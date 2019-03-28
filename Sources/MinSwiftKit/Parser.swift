@@ -135,6 +135,8 @@ class Parser: SyntaxVisitor {
                 return .equal
             case .spacedBinaryOperator("!="):
                 return .notEqual
+            case .semicolon:
+                return .semicolon
             default:
                 return nil
         }
@@ -350,7 +352,7 @@ class Parser: SyntaxVisitor {
         }
         read() // eat =
 
-        guard let initializer = parseExpression() else {
+        guard let initializer = parseExpression(expressionPrecedence: 2) else {
             fatalError("expected initializer expression")
         }
 
@@ -411,11 +413,11 @@ class Parser: SyntaxVisitor {
         }
     }
 
-    func parseExpression() -> Node? {
+    func parseExpression(expressionPrecedence: Int = 0) -> Node? {
         guard let lhs = parsePrimary() else {
             return nil
         }
-        return parseBinaryOperatorRHS(expressionPrecedence: 0, lhs: lhs)
+        return parseBinaryOperatorRHS(expressionPrecedence: expressionPrecedence, lhs: lhs)
     }
 
     private func parseReturn() -> Node {
@@ -485,6 +487,7 @@ private extension BinaryExpressionNode.Operator {
         case .multication, .division, .modulo: return 40
         case .lessThan, .lessEqual, .greaterThan, .greaterEqual: return 11
         case .equal, .notEqual: return 10
+        case .semicolon: return 1
         }
     }
 }
